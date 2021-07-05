@@ -71,4 +71,12 @@ Provides access to convert meebits without installing blender locally & a server
 
 ## Hosting
 
-Hosted on AWS Fargate. `http://EC2Co-EcsEl-3BYW4DXWAV1I-750400994.us-east-1.elb.amazonaws.com:3000/webhook`
+Hosted on AWS Fargate. `http://EC2Co-EcsEl-YO6EJALU9DXQ-364754001.us-east-1.elb.amazonaws.com`
+
+To update fargate with new image: push new image to ECR, then run
+
+```
+aws ecs update-service --cluster  arn:aws:ecs:us-east-1:121277330274:cluster/meets-conversion-server --service meebits-conversion-server-service --force-new-deployment --region us-east-1
+```
+
+Then stop old task on ECS.
