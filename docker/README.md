@@ -1,29 +1,74 @@
-# Docker for meebits blender utils
-Provides access to convert meebits without installing blender locally
+# Docker for meebits blender utils with a webserver for conversion
+Provides access to convert meebits without installing blender locally & a server to upload converted files to the Meebits Google Drive
 
-Steps: 
+## Run Locally:
 1. Install docker desktop https://docs.docker.com/get-docker/
-1. Create directories containing the meebits to convert and the resulting vrm files C:\meebit_vrm_conversion\input_meebits and C:\meebit_vrm_conversion\output_vrm   
-Feel free to change to different folder, but then the docker run command must be updated as well.   
-I use `find . -name "*solid.vox" -exec cp {} /mnt/c/meebit_vrm_conversion/input_meebits/ \;` to copy all solid.vox files in subtree of folders to the right directory.
-
-1. Configure docker desktop to give access to files under C:\meebit_vrm_conversion\
-![image](https://user-images.githubusercontent.com/1133607/120553598-f5ea2280-c3f8-11eb-9505-dc7a080fb048.png)
-
-1. Copy your meebits meebit_xxx_t_solid.vox to meebits-blender-utils/docker/meebits
-1. Open command prompt and navigate to directory meebits-blender-utils/docker
-1.  Build docker image with `docker build -t blender-meebits-v1 .`
-1.  Run the docker image interactively `docker run -v C:\meebit_vrm_conversion\input_meebits:/meebits -v C:\meebit_vrm_conversion\output_vrm:/output_vrm  -it blender-meebits-v1`
-PS make sure the -v volume commands has full paths and not just a relative path
-1.  In the container console, run `./convert_all_meebits.sh"` . Converted .vrm file will end up in the /output_vrm folder mapped to C:\meebit_vrm_conversion\output_vrm   
-Note: if this fails with `bash: ./convert_all_meebits.sh: /bin/bash^M: bad interpreter: No such file or directory` it's due to conflict between windows and linux file encoding.
-Run `sed -i -e 's/\r$//' convert_all_meebits.sh` and it should be fixed.
-3.  Exit container console
+2. Generate an API key for the `meebits-conversion` service account on the GCP console. GCP Console Home, `meebits-conversion` project -> IAM & Admin -> Service Accounts -> `meebits-conversion` service account -> Keys -> Add Key -> Create New Key -> JSON. Rename key to `google-service-account.json` and move to `./server/`
+3. Build container: `docker build -t blender-meebits-server .`
+4. Run container: `docker run -p 3000:3000 -d blender-meebits-server`. If you need to bash into the container: `docker exec -it <container id> /bin/bash`
 
 
-## Useful commands
-Useful commands for docker:
-- `docker images` - Get existing images
-- `docker ps` - View running images
-- `docker cp meebit_17871_t_solid.vox 8b7b72e384aa:/meebits` - Copy local file to docker container (8b7b72e384aa is container id found in `docker ps`)
-- `docker system prune -a` - Reclaim space
+## API Spec:
+* Healthcheck: `GET /`
+  * Response:
+    ```
+    {
+        "status": "healthy"
+    }
+    ```
+
+* Webhook: `POST /webhook`
+  * Request:
+    ```
+    {
+      "fileUrl": "https://cdn.discordapp.com/attachments/852231959358472222/860143902635196416/meebit_06895_t_solid.vox",
+      "folderId": "1SJoFD5dkoUDBz4L9f48Sbt4-DImC0yIo"
+    }
+    ```
+  * Response:
+    ```
+    {
+        "result": [
+            {
+                "kind": "drive#file",
+                "id": "1ii_v1nh_a8iCUQ26QZFSern5O2m91T_4",
+                "name": "meebit_06895_t_solid.fbx",
+                "mimeType": "application/octet-stream"
+            },
+            {
+                "kind": "drive#file",
+                "id": "1BVpwpxkH9zc9gihriajcNmRtIvPCTgTT",
+                "name": "meebit_06895_t_solid.glb",
+                "mimeType": "application/octet-stream"
+            },
+            {
+                "kind": "drive#file",
+                "id": "1h-upSckWhUwOvJ0W4ZAIvvp2YWtdWLNy",
+                "name": "meebit_06895_t_solid.jpg",
+                "mimeType": "image/jpeg"
+            },
+            {
+                "kind": "drive#file",
+                "id": "1gXxUkCjgTLnxq3DpF5mRxA1TsHq4Xr-o",
+                "name": "meebit_06895_t_solid.mtl",
+                "mimeType": "application/octet-stream"
+            },
+            {
+                "kind": "drive#file",
+                "id": "1kjrGSUruf7LBsYAs6fMrnUriYSLnX8xp",
+                "name": "meebit_06895_t_solid.obj",
+                "mimeType": "application/octet-stream"
+            },
+            {
+                "kind": "drive#file",
+                "id": "1uSvD-BHCrVawbFuZ7-z9eBj_03T6cGph",
+                "name": "meebit_06895_t_solid.vrm",
+                "mimeType": "x-world/x-vrml"
+            }
+        ]
+    }
+    ```
+
+## Hosting
+
+Hosted on AWS Fargate. `http://EC2Co-EcsEl-3BYW4DXWAV1I-750400994.us-east-1.elb.amazonaws.com:3000/webhook`
