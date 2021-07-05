@@ -2,3 +2,13 @@
 *.blend1
 add-on/__pycache__/
 command-line/__pycache__/
+
+**/node_modules
+npm-debug.log
+.DS_Store
+/*.env
+
+**/output_vrm
+**/meebits
+
+google-service-account.json
