@@ -6,26 +6,25 @@ FROM nytimes/blender:latest
 # Copy blender scene with aramature
 # Copy VRM add-on
 # All in one layer to current directory
-copy code/* MeebitRig.blend code/VRM_Addon_for_Blender-release.zip ./
+COPY code/* MeebitRig.blend code/VRM_Addon_for_Blender-release.zip ./
 
 # Install VRM add-on through our script
-run blender -b  -y  --python blender_install_vrm_addon.py
+RUN blender -b  -y  --python blender_install_vrm_addon.py
 
-# Copy ser
-copy server/app.js server/package.json server/google-service-account.json server/yarn.lock ./
+# Copy server
+COPY server/app.js server/package.json server/google-service-account.json server/yarn.lock ./
 
-# File setup
-run mkdir meebits
-run mkdir output_vrm
-run chmod u+x convert_all_meebits.sh
-
-# Install node
-run apt-get update; apt-get -y install curl
-run curl -fsSL https://deb.nodesource.com/setup_14.x | bash -
-run apt-get install -y nodejs
-run npm install --global yarn
-run yarn --pure-lockfile
+# Server setup
+RUN mkdir meebits &&\
+  mkdir output_vrm &&\
+  chmod u+x convert_all_meebits.sh &&\
+  apt-get update; apt-get -y install curl; apt-get -y install redis-server &&\
+  curl -fsSL https://deb.nodesource.com/setup_14.x | bash - &&\
+  apt-get install -y nodejs &&\
+  npm install --global yarn &&\
+  yarn --pure-lockfile &&\
+  redis-server --daemonize yes
 
 EXPOSE 3000
 
-CMD [ "yarn", "start" ]
+CMD redis-server --daemonize yes ; yarn start

@@ -8,6 +8,7 @@
     "start": "node app.js"
   },
   "dependencies": {
+    "bee-queue": "^1.4.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "googleapis": "^80.0.0",
