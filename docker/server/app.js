@@ -118,11 +118,6 @@ conversionQueue.process(async (job) => {
 
 });
 
-addQueue.process(async (job) => {
-  console.log(`Processing job ${job.id}`);
-  return job.data.x + job.data.y;
-});
-
 uploadQueue.process(async (job) => {
   const { folderId, convertedFileName } = job.data;
   const convertedFilePath = `./output_vrm/${convertedFileName}`
