@@ -37,6 +37,7 @@ if blend_dir not in sys.path:
 
 from meebit_core import import_meebit_vox
 
+
 # Argument parser from https://blender.stackexchange.com/a/6844
 class ArgumentParserForBlender(argparse.ArgumentParser):
     """

@@ -6,13 +6,13 @@ FROM nytimes/blender:latest
 # Copy blender scene with aramature
 # Copy VRM add-on
 # All in one layer to current directory
-COPY code/* MeebitRig.blend code/VRM_Addon_for_Blender-release.zip ./
+COPY code/* code/MeebitRig.blend code/VRM_Addon_for_Blender-release.zip ./
 
 # Install VRM add-on through our script
 RUN blender -b  -y  --python blender_install_vrm_addon.py
 
 # Copy server
-COPY server/app.js server/package.json server/google-service-account.json server/yarn.lock ./
+COPY server/app.js server/google-service-account.json server/package.json server/yarn.lock ./
 
 # Server setup
 RUN mkdir meebits &&\

@@ -1,6 +1,5 @@
 #!/bin/bash
-
-for meebit_file in /meebits/*solid.vox 
+for meebit_file in meebits/*.vox;
 do
     blender MeebitRig.blend --background --python meebit_export_to_vrm.py -- --meebit $meebit_file
     blender MeebitRig.blend --background --python meebit_export_to_nonvrm.py -- --meebit $meebit_file

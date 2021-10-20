@@ -1,0 +1,29 @@
+8:C 19 Oct 17:05:37.391 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+8:C 19 Oct 17:05:37.391 # Redis version=4.0.9, bits=64, commit=00000000, modified=0, pid=8, just started
+8:C 19 Oct 17:05:37.391 # Configuration loaded
+yarn run v1.22.17
+$ node app.js
+Promise { <pending> }
+/node_modules/firebase-admin/lib/utils/error.js:44
+        var _this = _super.call(this, errorInfo.message) || this;
+                           ^
+
+FirebaseAppError: Service account object must contain a string "project_id" property.
+    at FirebaseAppError.FirebaseError [as constructor] (/node_modules/firebase-admin/lib/utils/error.js:44:28)
+    at FirebaseAppError.PrefixedFirebaseError [as constructor] (/node_modules/firebase-admin/lib/utils/error.js:90:28)
+    at new FirebaseAppError (/node_modules/firebase-admin/lib/utils/error.js:125:28)
+    at new ServiceAccount (/node_modules/firebase-admin/lib/app/credential-internal.js:135:19)
+    at new ServiceAccountCredential (/node_modules/firebase-admin/lib/app/credential-internal.js:69:15)
+    at Object.cert (/node_modules/firebase-admin/lib/app/credential-factory.js:103:54)
+    at file:///app.js:38:32
+    at ModuleJob.run (internal/modules/esm/module_job.js:183:25)
+    at async Loader.import (internal/modules/esm/loader.js:178:24)
+    at async Object.loadESM (internal/process/esm_loader.js:68:5) {
+  errorInfo: {
+    code: 'app/invalid-credential',
+    message: 'Service account object must contain a string "project_id" property.'
+  },
+  codePrefix: 'app'
+}
+error Command failed with exit code 1.
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
